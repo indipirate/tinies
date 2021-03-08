@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Read and get base64</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      div {
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <input
+        id="fileType"
+        type="radio"
+        name="fileType"
+        value="application/pdf"
+      />PDF
+      <input
+        id="fileType"
+        type="radio"
+        name="fileType"
+        value="image/jpeg"
+      />JPEG
+      <input id="fileType" type="radio" name="fileType" value="image/jpeg" />JPG
+      <input id="fileType" type="radio" name="fileType" value="image/png" />PNG
+    </div>
+    <div>
+      <input id="inputFile" type="file" onchange="convertToBase64();" />
+    </div>
+    <div>
+      <label>Enter base 64 String</label>
+    </div>
+    <div>
+      <textarea rows="10" cols="100" id="base64String"></textarea>
+    </div>
+    <div>
+      <button onclick="convertFromBase64()">Convert from base64 String</button>
+    </div>
+    <script type="text/javascript">
+      function convertToBase64() {
+        //Read File
+        var fileType = getFileType();
+        if (fileType == null) {
+          alert(
+            "Please fucking select a type unless you wan to see how use less the conversion be!"
+          );
+          return;
+        }
+        var selectedFile = document.getElementById("inputFile").files;
+        //Check File is not Empty
+        if (selectedFile.length > 0) {
+          // Select the very first file from list
+          var fileToLoad = selectedFile[0];
+          // FileReader function for read the file.
+          var fileReader = new FileReader();
+          // Convert data to base64
+          fileReader.readAsDataURL(fileToLoad);
+          var base64;
+          // Onload of file read the file content
+          fileReader.onload = function (fileLoadedEvent) {
+            base64 = fileLoadedEvent.target.result.replace(
+              `data:${fileType};base64,`,
+              ""
+            );
+            readAndOpenBase64(base64, fileType);
+          };
+        }
+      }
+      const getFileType = () => {
+        var ele = document.getElementsByName("fileType");
+
+        for (i = 0; i < ele.length; i++) {
+          if (ele[i].checked) return ele[i].value;
+        }
+      };
+      const convertFromBase64 = () => {
+        var base64 = document.getElementById("base64String").value;
+        var fileType = getFileType();
+        if (fileType == null) {
+          alert(
+            "Please fucking select a type unless you wan to see how use less the conversion be!"
+          );
+          return;
+        }
+        readAndOpenBase64(base64, fileType);
+      };
+      const readAndOpenBase64 = (base64, fileType) => {
+        console.log(base64);
+        const byteString = window.atob(base64);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const int8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+          int8Array[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([int8Array], {
+          type: `${fileType}`,
+        });
+        // data should be your response data in base64 format
+        const url = URL.createObjectURL(blob);
+
+        // to open the PDF in a new window
+        window.open(url, "_blank");
+      };
+    </script>
+  </body>
+</html>
