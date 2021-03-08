@@ -9,6 +9,10 @@
       div {
         margin: 10px;
       }
+      iframe {
+        width: 80vw;
+        height: 80vh;
+      }
     </style>
   </head>
   <body>
@@ -39,6 +43,9 @@
     </div>
     <div>
       <button onclick="convertFromBase64()">Convert from base64 String</button>
+    </div>
+    <div>
+      <iframe src="" id='myCanvas'></iframe>
     </div>
     <script type="text/javascript">
       function convertToBase64() {
@@ -101,9 +108,10 @@
         });
         // data should be your response data in base64 format
         const url = URL.createObjectURL(blob);
-
+        var myCanvas = document.getElementById('myCanvas');
+        myCanvas.src = url;
         // to open the PDF in a new window
-        window.open(url, "_blank");
+        // window.open(url, "_blank");
       };
     </script>
   </body>
